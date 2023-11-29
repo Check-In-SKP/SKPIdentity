@@ -1,3 +1,2 @@
 # SKPIdentityCore
-SKPIdentityCore is a module used for user authentication and creation to secure maintainability and scalability across different systems and platforms.
-SKPIdentityCore is not yet implemented.
+SKPIdentityCore is a microservice used for authentication and authorization and storage of a SKP user.
