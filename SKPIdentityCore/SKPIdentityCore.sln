@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SKPIdentityCore", "SKPIdentityCore\SKPIdentityCore.csproj", "{DDB20DE0-9A5D-4D40-BB2B-3C2766FE294E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DDB20DE0-9A5D-4D40-BB2B-3C2766FE294E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDB20DE0-9A5D-4D40-BB2B-3C2766FE294E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDB20DE0-9A5D-4D40-BB2B-3C2766FE294E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDB20DE0-9A5D-4D40-BB2B-3C2766FE294E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CBE197D2-433B-42F8-AD7D-C56583D07AF5}
+	EndGlobalSection
+EndGlobal
