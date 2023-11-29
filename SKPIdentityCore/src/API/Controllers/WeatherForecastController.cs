@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace SKPIdentityCore.Controllers
+namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]

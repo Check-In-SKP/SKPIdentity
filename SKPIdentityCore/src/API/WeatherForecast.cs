@@ -1,4 +1,4 @@
-namespace SKPIdentityCore
+namespace API
 {
     public class WeatherForecast
     {
