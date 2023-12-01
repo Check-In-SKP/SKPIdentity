@@ -1,2 +1,2 @@
 # SKPIdentityCore
-SKPIdentityCore is a microservice used for authentication and authorization and storage of a SKP user.
+SKPIdentityCore is a microservice used for authentication, authorization and storage of an SKP user.
