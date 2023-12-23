@@ -1,4 +1,4 @@
-﻿using Identity.Domain.Enums;
+﻿using Identity.Domain.Entities.UserAggregate.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
