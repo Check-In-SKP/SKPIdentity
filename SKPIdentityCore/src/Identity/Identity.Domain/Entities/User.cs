@@ -28,7 +28,7 @@ namespace Identity.Domain.Entities
         // Defines a list of custom roles defined from an ApiClient.
         // (used for authorization outside the scope of the solution)
         // (Bidirectional relationship)
-        public List<Guid?> CustomRoleIds { get; private set; }
+        public List<Guid?> DynamicRoleIds { get; private set; }
 
         // List of Session IDs associated with a user.
         // (Bidirectional relationship)

@@ -13,7 +13,7 @@ namespace Identity.Domain.Entities.ApiClientAggregate
         public Guid Id => _id;
         public string ApiKey { get; private set; }
         public string ProjectName { get; private set; }
-        public List<CustomRole> CustomRoles { get; private set; }
+        public List<DynamicRole> CustomRoles { get; private set; }
         public Guid UserId { get; private set; }
     }
 }

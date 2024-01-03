@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Identity.Domain.Entities.ApiClientAggregate
 {
-    public class CustomRole : BaseEntity
+    public class DynamicRole : BaseEntity
     {
         private readonly Guid _id;
         public Guid Id => _id;
