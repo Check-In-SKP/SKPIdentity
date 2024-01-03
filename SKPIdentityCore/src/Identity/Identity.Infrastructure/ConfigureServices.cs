@@ -1,10 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Identity.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Identity.Infrastructure
 {
@@ -12,6 +9,7 @@ namespace Identity.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddDbContext<IdentityDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("IdentityConnection")));
             return services;
         }
     }

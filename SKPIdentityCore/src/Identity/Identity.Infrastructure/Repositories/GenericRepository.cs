@@ -1,4 +1,5 @@
 ﻿using Identity.Domain.Repositories;
+using Identity.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,18 +11,19 @@ namespace Identity.Infrastructure.Repositories
 {
     public class GenericRepository<T, TKey> : IGenericRepository<T, TKey> where T : class
     {
-        private readonly IdentityContext _context;
+        private readonly IdentityDbContext _context;
         private readonly DbSet<T> _dbSet;
 
-        public GenericRepository(IdentityContext context)
+        public GenericRepository(IdentityDbContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();
         }
 
-        public async Task AddAsync(T entity)
+        public async Task<T> AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
+            return entity;
         }
 
         public async Task AddRangeAsync(IEnumerable<T> entities)
