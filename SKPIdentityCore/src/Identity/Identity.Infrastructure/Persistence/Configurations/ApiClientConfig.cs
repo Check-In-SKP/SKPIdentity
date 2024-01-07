@@ -8,7 +8,17 @@ namespace Identity.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<ApiClient> builder)
         {
+            //Primary Key
+            builder.HasKey(ac => ac.Id);
 
+            //Properties
+            builder.Property(ac => ac.ApiKey)
+                .IsRequired()
+                .HasMaxLength(256);
+
+            builder.Property(ac => ac.ProjectName)
+                .IsRequired()
+                .HasMaxLength(256);
         }
     }
 }

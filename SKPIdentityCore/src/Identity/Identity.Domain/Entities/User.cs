@@ -13,6 +13,12 @@ namespace Identity.Domain.Entities
         private readonly Guid _id;
         public Guid Id => _id;
 
+        public string Username { get; private set; }
+
+        public string FirstName { get; private set; }
+
+        public string LastName { get; private set; }
+
         public string Email { get; private set; }
 
         public bool IsEmailConfirmed { get; private set; }

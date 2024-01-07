@@ -45,6 +45,4 @@ namespace Identity.Infrastructure.Repositories
             _context.Dispose();
         }
     }
-    {
-    }
 }

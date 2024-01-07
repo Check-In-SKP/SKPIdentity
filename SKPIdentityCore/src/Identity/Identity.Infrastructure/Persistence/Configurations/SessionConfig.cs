@@ -8,22 +8,26 @@ namespace Identity.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Session> builder)
         {
-            builder.HasKey(x => x.Id);
+            // Primary key
+            builder.HasKey(s => s.Id);
 
-            builder.Property(x => x.RefreshToken)
+            // Properties
+            builder.Property(s => s.RefreshToken)
                 .IsRequired();
 
-            builder.Property(x => x.IpAddress)
+            builder.Property(s => s.IpAddress)
                 .IsRequired();
 
-            builder.Property(x => x.DeviceId)
+            builder.Property(s => s.DeviceId)
                 .IsRequired();
 
-            builder.Property(x => x.UserId)
+            builder.Property(s => s.IsRevoked)
                 .IsRequired();
 
-            builder.Property(x => x.IsRevoked)
-                .IsRequired();
+            builder.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

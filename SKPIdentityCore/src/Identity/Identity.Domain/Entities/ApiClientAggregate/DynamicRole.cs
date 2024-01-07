@@ -14,7 +14,11 @@ namespace Identity.Domain.Entities.ApiClientAggregate
         public string Name { get; private set; }
         public string Description { get; private set; }
 
+        // ApiClient ID associated with this role
+        public Guid ApiClientId { get; private set; }
+
         // List of User IDs associated with this role (Bidirectional relationship)
         public List<Guid> UserIds { get; private set; }
     }
 }
+    
