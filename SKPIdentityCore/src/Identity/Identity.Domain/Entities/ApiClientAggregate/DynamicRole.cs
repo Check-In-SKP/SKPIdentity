@@ -9,16 +9,31 @@ namespace Identity.Domain.Entities.ApiClientAggregate
 {
     public class DynamicRole : BaseEntity
     {
-        private readonly Guid _id;
+        public DynamicRole(Guid id, string name, string? description, Guid apiClientId, List<Guid> userIds)
+        {
+            _id = id;
+            _name = name;
+            _description = description;
+            _apiClientId = apiClientId;
+            _userIds = userIds;
+        }
+
         public Guid Id => _id;
-        public string Name { get; private set; }
-        public string Description { get; private set; }
+        private readonly Guid _id;
+
+        public string Name { get => _name; private set => _name = value; }
+        private string _name;
+        
+        public string? Description { get => _description; private set => _description = value; }
+        private string? _description;
 
         // ApiClient ID associated with this role
-        public Guid ApiClientId { get; private set; }
+        public Guid ApiClientId => _apiClientId;
+        private readonly Guid _apiClientId;
 
         // List of User IDs associated with this role (Bidirectional relationship)
-        public List<Guid> UserIds { get; private set; }
+        public List<Guid> UserIds { get => _userIds; private set => _userIds = value; }
+        private List<Guid> _userIds;
     }
 }
     

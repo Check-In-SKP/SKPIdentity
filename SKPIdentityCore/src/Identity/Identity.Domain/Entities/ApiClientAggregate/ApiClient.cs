@@ -9,20 +9,31 @@ namespace Identity.Domain.Entities.ApiClientAggregate
 {
     public class ApiClient : BaseEntity
     {
-        public ApiClient(string apiKey, string projectName, List<DynamicRole?> dynamicRoles, Guid userId)
+        public ApiClient(Guid id, string apiKey, string name, string? description, Guid userId)
         {
-            _id = Guid.NewGuid();
-            ApiKey = apiKey;
-            ProjectName = projectName;
-            DynamicRoles = dynamicRoles;
-            UserId = userId;
+            _id = id;
+            _apiKey = apiKey;
+            _name = name;
+            _description = description;
+            _userId = userId;
         }
-
-        private readonly Guid _id;
+        
         public Guid Id => _id;
-        public string ApiKey { get; private set; }
-        public string ProjectName { get; private set; }
-        public List<DynamicRole?> DynamicRoles { get; private set; }
-        public Guid UserId { get; private set; }
+        private readonly Guid _id;
+
+        public string ApiKey => _apiKey;
+        private readonly string _apiKey;
+        
+        public string Name { get => _name; private set => _name = value; }
+        private string _name;
+        
+        public string? Description { get => _description; private set => _description = value; }
+        private string? _description;
+
+        public Guid UserId => _userId;
+        private readonly Guid _userId;
+        
+        public IReadOnlyCollection<DynamicRole?> DynamicRoles => _dynamicRoles.AsReadOnly();
+        private readonly List<DynamicRole?> _dynamicRoles = new();
     }
 }

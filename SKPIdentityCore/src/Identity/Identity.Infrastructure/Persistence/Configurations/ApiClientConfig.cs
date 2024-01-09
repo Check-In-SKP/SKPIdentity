@@ -16,7 +16,7 @@ namespace Identity.Infrastructure.Persistence.Configurations
                 .IsRequired()
                 .HasMaxLength(256);
 
-            builder.Property(ac => ac.ProjectName)
+            builder.Property(ac => ac.Name)
                 .IsRequired()
                 .HasMaxLength(256);
         }
