@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Identity.Domain.Common;
+﻿using Identity.Domain.Common;
 
 namespace Identity.Domain.Entities.ApiClientAggregate
 {
@@ -30,10 +25,10 @@ namespace Identity.Domain.Entities.ApiClientAggregate
         public string? Description { get => _description; private set => _description = value; }
         private string? _description;
 
+        public List<DynamicRole?> DynamicRoles { get => _dynamicRoles; private set => _dynamicRoles = value; }
+        private List<DynamicRole?> _dynamicRoles = new();
+
         public Guid UserId => _userId;
         private readonly Guid _userId;
-        
-        public IReadOnlyCollection<DynamicRole?> DynamicRoles => _dynamicRoles.AsReadOnly();
-        private readonly List<DynamicRole?> _dynamicRoles = new();
     }
 }

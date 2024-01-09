@@ -1,4 +1,5 @@
-﻿using Identity.Domain.Entities.ApiClientAggregate;
+﻿using Identity.Domain.Entities;
+using Identity.Domain.Entities.ApiClientAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,6 +20,12 @@ namespace Identity.Infrastructure.Persistence.Configurations
             builder.Property(ac => ac.Name)
                 .IsRequired()
                 .HasMaxLength(256);
+
+            // Foreignkeys
+            builder.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

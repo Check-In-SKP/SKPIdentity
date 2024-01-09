@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Identity.Domain.Common
 {
     public class BaseEntity : BaseAuditable
     {
         private readonly List<BaseEvent> _domainEvents = new();
+        
+        [NotMapped]
         public IReadOnlyCollection<BaseEvent> DomainEvents => _domainEvents.AsReadOnly();
 
         public void AddDomainEvent(BaseEvent eventItem)

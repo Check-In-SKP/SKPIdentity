@@ -33,4 +33,3 @@ COPY --from=publish /app/publish .
 
 # Switch to non-root user
 USER appuser
-ENTRYPOINT ["./entrypoint.sh"]
