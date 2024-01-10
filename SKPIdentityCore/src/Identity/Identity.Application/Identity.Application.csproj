@@ -10,4 +10,10 @@
     <ProjectReference Include="..\Identity.Domain\Identity.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ApiClient\" />
+    <Folder Include="User\" />
+    <Folder Include="Session\" />
+  </ItemGroup>
+
 </Project>

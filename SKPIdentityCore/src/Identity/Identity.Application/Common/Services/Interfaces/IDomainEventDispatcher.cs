@@ -1,6 +1,6 @@
 ﻿using Identity.Domain.Common;
 
-namespace Identity.Application.Common.Interfaces
+namespace Identity.Application.Common.Services.Interfaces
 {
     public interface IDomainEventDispatcher
     {

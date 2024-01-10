@@ -12,7 +12,7 @@ namespace Identity.Domain.Repositories
         IUserRepository UserRepository { get; }
         ISessionRepository SessionRepository { get; }
         IApiClientRepository ApiClientRepository { get; }
-        Task<int> CompleteAsync(CancellationToken cancellationToken = default);
+        Task CompleteAsync(CancellationToken cancellationToken = default);
         Task BeginTransactionAsync(CancellationToken cancellationToken = default);
         Task CommitTransactionAsync(CancellationToken cancellationToken = default);
         void RollbackTransaction();
