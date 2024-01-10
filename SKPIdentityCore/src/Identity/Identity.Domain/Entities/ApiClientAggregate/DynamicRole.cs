@@ -1,20 +1,28 @@
 ﻿using Identity.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Identity.Domain.Entities.ApiClientAggregate
 {
     public class DynamicRole : BaseEntity
     {
-        private readonly Guid _id;
+        public DynamicRole(Guid id, string name, string? description)
+        {
+            _id = id;
+            _name = name;
+            _description = description;
+        }
+
         public Guid Id => _id;
-        public string Name { get; private set; }
-        public string Description { get; private set; }
+        private readonly Guid _id;
+
+        public string Name { get => _name; private set => _name = value; }
+        private string _name;
+        
+        public string? Description { get => _description; private set => _description = value; }
+        private string? _description;
 
         // List of User IDs associated with this role (Bidirectional relationship)
-        public List<Guid> UserIds { get; private set; }
+        public List<Guid?> UserIds { get => _userIds; private set => _userIds = value; }
+        private List<Guid?> _userIds = new();
     }
 }
+    

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Identity.Domain.Entities.ApiClientAggregate;
 
 namespace Identity.Domain.Repositories
 {
-    internal interface IApiClientRepository
+    public interface IApiClientRepository : IGenericRepository<ApiClient, Guid>
     {
     }
 }

@@ -16,6 +16,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Domain", "src\Identity\Identity.Domain\Identity.Domain.csproj", "{0A53508F-9DB9-4C66-8C8F-5461FC0B04FB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Infrastructure", "src\Identity\Identity.Infrastructure\Identity.Infrastructure.csproj", "{4CB8ABA0-1E05-4DB2-B6C6-248458C4EB04}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ACBF5805-329E-4B60-BEB9-2160EDB9188F} = {ACBF5805-329E-4B60-BEB9-2160EDB9188F}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{77D032EC-8FA9-4EB3-823E-90D01F0FDFDE}"
 EndProject
