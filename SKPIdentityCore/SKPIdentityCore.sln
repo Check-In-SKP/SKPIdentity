@@ -22,8 +22,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Infrastructure", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{77D032EC-8FA9-4EB3-823E-90D01F0FDFDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication3", "WebApplication3\WebApplication3.csproj", "{76BE015B-DA98-491D-A08D-3F4B4376B7F8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,10 +44,6 @@ Global
 		{4CB8ABA0-1E05-4DB2-B6C6-248458C4EB04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CB8ABA0-1E05-4DB2-B6C6-248458C4EB04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CB8ABA0-1E05-4DB2-B6C6-248458C4EB04}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76BE015B-DA98-491D-A08D-3F4B4376B7F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76BE015B-DA98-491D-A08D-3F4B4376B7F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76BE015B-DA98-491D-A08D-3F4B4376B7F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76BE015B-DA98-491D-A08D-3F4B4376B7F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,7 +55,6 @@ Global
 		{0A53508F-9DB9-4C66-8C8F-5461FC0B04FB} = {42267F31-2879-46A8-958B-4D406ABD8B4A}
 		{4CB8ABA0-1E05-4DB2-B6C6-248458C4EB04} = {42267F31-2879-46A8-958B-4D406ABD8B4A}
 		{77D032EC-8FA9-4EB3-823E-90D01F0FDFDE} = {79D5BD0B-DA42-4F7E-867F-0E89106C8D1E}
-		{76BE015B-DA98-491D-A08D-3F4B4376B7F8} = {42267F31-2879-46A8-958B-4D406ABD8B4A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CBE197D2-433B-42F8-AD7D-C56583D07AF5}

@@ -17,7 +17,10 @@ namespace Identity.Infrastructure
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<IdentityDbContext>(options => options.UseNpgsql(connectionString));
 
-            // Services
+            // Infrastructure and Application Services
+            services.AddScoped<IDataProtectorService, DataProtectorService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ITokenService, TokenService>();
             services.AddSingleton<IBCryptPasswordHasher, BCryptPasswordHasher>();
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 

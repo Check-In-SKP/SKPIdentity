@@ -11,9 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ApiClient\" />
-    <Folder Include="User\" />
-    <Folder Include="Session\" />
+    <Folder Include="ApiClient\Commands\" />
+    <Folder Include="ApiClient\EventHandlers\" />
+    <Folder Include="ApiClient\Queries\" />
+    <Folder Include="Session\EventHandlers\" />
+    <Folder Include="Session\Queries\" />
+    <Folder Include="User\EventHandlers\" />
+    <Folder Include="User\Queries\" />
   </ItemGroup>
 
 </Project>
