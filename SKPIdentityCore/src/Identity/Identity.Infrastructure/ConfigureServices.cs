@@ -21,7 +21,7 @@ namespace Identity.Infrastructure
             services.AddScoped<IDataProtectorService, DataProtectorService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, TokenService>();
-            services.AddSingleton<IBCryptPasswordHasher, BCryptPasswordHasher>();
+            services.AddScoped<IBCryptPasswordHasher, BCryptPasswordHasher>();
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
             // Repositories

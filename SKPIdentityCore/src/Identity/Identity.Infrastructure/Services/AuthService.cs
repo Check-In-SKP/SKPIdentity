@@ -15,8 +15,7 @@ namespace Identity.Infrastructure.Services
         // Method to validate PKCE code_verifier
         public bool ValidateCodeVerifier(AuthCode code, string codeVerifier)
         {
-            using var sha256 = SHA256.Create();
-            var challengeBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
+            var challengeBytes = SHA256.HashData(Encoding.UTF8.GetBytes(codeVerifier));
             return code.CodeChallenge == WebEncoders.Base64UrlEncode(challengeBytes);
         }
     }

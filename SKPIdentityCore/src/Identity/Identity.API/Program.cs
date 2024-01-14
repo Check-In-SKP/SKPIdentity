@@ -2,6 +2,7 @@ using Identity.Infrastructure;
 using Identity.Application;
 using Identity.API.Endpoints;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.DependencyInjection;
 
 internal class Program
 {
