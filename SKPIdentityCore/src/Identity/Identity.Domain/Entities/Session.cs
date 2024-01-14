@@ -14,6 +14,9 @@ namespace Identity.Domain.Entities
             _userId = UserId;
         }
 
+        // EF Core constructor
+        private Session() { }
+
         public Guid Id => _id;
         private readonly Guid _id;
 
@@ -35,6 +38,16 @@ namespace Identity.Domain.Entities
         public void Revoke()
         {
             IsRevoked = true;
+        }
+
+        public void UpdateIpAddress(string ipAddress)
+        {
+            IpAddress = ipAddress;
+        }
+
+        public void UpdateRefreshToken(string refreshToken)
+        {
+            RefreshToken = refreshToken;
         }
     }
 }

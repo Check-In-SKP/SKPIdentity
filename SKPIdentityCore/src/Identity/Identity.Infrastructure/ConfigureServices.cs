@@ -28,7 +28,6 @@ namespace Identity.Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISessionRepository, SessionRepository>();
             services.AddScoped<IApiClientRepository, ApiClientRepository>();
-            services.AddScoped<IDynamicRoleRepository, DynamicRoleRepository>();
 
             return services;
         }

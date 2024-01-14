@@ -21,6 +21,9 @@ namespace Identity.Domain.Entities
             _apiClientIds = apiClientIds;
         }
 
+        // EF Core constructor
+        private User() { }
+
         public Guid Id => _id;
         private readonly Guid _id;
 

@@ -13,7 +13,7 @@ namespace Identity.Domain.Entities.ApiClientAggregate
             _userId = userId;
         }
 
-        // EF constructor
+        // EF Core constructor
         private ApiClient() { }
         
         public Guid Id => _id;

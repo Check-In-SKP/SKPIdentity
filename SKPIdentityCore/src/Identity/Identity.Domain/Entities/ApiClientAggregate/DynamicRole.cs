@@ -11,7 +11,7 @@ namespace Identity.Domain.Entities.ApiClientAggregate
             _description = description;
         }
 
-        // EF constructor
+        // EF Core constructor
         private DynamicRole() { }
 
         public Guid Id => _id;

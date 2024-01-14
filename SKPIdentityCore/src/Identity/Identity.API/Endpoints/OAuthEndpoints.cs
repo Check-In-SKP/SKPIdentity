@@ -55,67 +55,105 @@ namespace Identity.API.Endpoints
 
         private static async Task<IResult> LoginHandler(HttpContext ctx, string returnUrl)
         {
-            // Handle user authentication and set cookie
-            // For demonstration, auto-generating a user identity
-            await ctx.SignInAsync("cookie",
-                new ClaimsPrincipal(
-                    new ClaimsIdentity(
-                        new Claim[]
-                        {
-                            new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
-                        },
-                        "cookie"
-                    )));
-            return Results.Redirect(returnUrl);
+            // Simulate user authentication - in real scenario, validate user credentials
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Name, "SampleUser")
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, "cookie");
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+            await ctx.SignInAsync("cookie", claimsPrincipal);
+
+            return Results.Redirect(string.IsNullOrEmpty(returnUrl) ? "/" : returnUrl);
         }
 
         private static IResult AuthorizeHandler(HttpContext ctx, IDataProtectionProvider dataProtectionProvider)
         {
-            //// Extract and validate query parameters for the authorization request
-            //// ...
+            var queryParams = ctx.Request.Query;
+            var clientId = queryParams["client_id"];
+            var codeChallenge = queryParams["code_challenge"];
+            var codeChallengeMethod = queryParams["code_challenge_method"];
+            var redirectUri = queryParams["redirect_uri"];
+            var scope = queryParams["scope"];
+            var state = queryParams["state"];
 
-            //var authCode = new AuthCode
-            //{
-            //    // Populate authCode with query parameter values
-            //    // ...
-            //};
+            if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(codeChallenge) || string.IsNullOrEmpty(redirectUri))
+            {
+                return Results.BadRequest("Missing required parameters");
+            }
 
-            //var protector = dataProtectionProvider.CreateProtector("oauth");
-            //var codeString = protector.Protect(JsonSerializer.Serialize(authCode));
+            var authCode = new AuthCode
+            {
+                ClientId = clientId,
+                CodeChallenge = codeChallenge,
+                CodeChallengeMethod = codeChallengeMethod,
+                RedirectUri = redirectUri,
+                Expiry = DateTime.UtcNow.AddMinutes(5)
+            };
 
-            //return Results.Redirect($"{redirectUri}?code={codeString}&state={state}&iss={HttpUtility.UrlEncode("https://localhost")}");
-            
-            return Results.Ok();
+            var protector = dataProtectionProvider.CreateProtector("OAuth");
+            var protectedCode = protector.Protect(JsonSerializer.Serialize(authCode));
+
+            var responseUri = $"{redirectUri}?code={protectedCode}&state={state}";
+            return Results.Redirect(responseUri);
         }
 
-        private static async Task<IResult> TokenHandler(HttpRequest request, ITokenService tokenService, IAuthService authService)
+        private static async Task<IResult> TokenHandler(HttpRequest request, ITokenService tokenService, IAuthService authService, IDataProtectionProvider dataProtectionProvider)
         {
-            //// Parse the request body and validate parameters
-            //// ...
+            var bodyContent = await new StreamReader(request.Body).ReadToEndAsync();
+            var parsedContent = HttpUtility.ParseQueryString(bodyContent);
 
-            //if (!authService.ValidateCodeVerifier(authCode, codeVerifier))
-            //{
-            //    return Results.BadRequest("Invalid code verifier");
-            //}
+            var grantType = parsedContent["grant_type"];
+            var code = parsedContent["code"];
+            var redirectUri = parsedContent["redirect_uri"];
+            var codeVerifier = parsedContent["code_verifier"];
 
-            //// Generate access and refresh tokens
-            //var accessToken = tokenService.GenerateAccessToken(new List<Claim>
-            //{
-            //    new Claim(JwtRegisteredClaimNames.Sub, authCode.ClientId)
-            //    // Additional claims as needed
-            //});
+            if (grantType != "authorization_code")
+            {
+                return Results.BadRequest("Unsupported grant type");
+            }
 
-            //var refreshToken = tokenService.GenerateRefreshToken();
+            var protector = dataProtectionProvider.CreateProtector("OAuth");
+            AuthCode authCode;
+            try
+            {
+                var unprotectedCode = protector.Unprotect(code);
+                authCode = JsonSerializer.Deserialize<AuthCode>(unprotectedCode);
+            }
+            catch
+            {
+                return Results.BadRequest("Invalid code");
+            }
 
-            //return Results.Ok(new
-            //{
-            //    access_token = accessToken,
-            //    refresh_token = refreshToken,
-            //    token_type = "Bearer",
-            //    expires_in = 900 // 15 minutes in seconds
-            //});
-            
-            return Results.Ok();
+            if (authCode == null || !authService.ValidateCodeVerifier(authCode, codeVerifier))
+            {
+                return Results.BadRequest("Invalid code verifier");
+            }
+
+            // Ensure that the auth code hasn't expired and redirectUri matches
+            if (authCode.Expiry < DateTimeOffset.UtcNow || authCode.RedirectUri != redirectUri)
+            {
+                return Results.BadRequest("Invalid or expired authorization code");
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, authCode.ClientId)
+            };
+
+            var accessToken = tokenService.GenerateAccessToken(claims);
+            var refreshToken = tokenService.GenerateRefreshToken();
+
+            return Results.Ok(new
+            {
+                access_token = accessToken,
+                refresh_token = refreshToken,
+                token_type = "Bearer",
+                expires_in = 900 // 15 minutes
+            });
         }
     }
 }
