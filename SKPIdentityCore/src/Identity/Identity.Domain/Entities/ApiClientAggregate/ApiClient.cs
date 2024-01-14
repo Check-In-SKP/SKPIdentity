@@ -12,6 +12,9 @@ namespace Identity.Domain.Entities.ApiClientAggregate
             _description = description;
             _userId = userId;
         }
+
+        // EF constructor
+        private ApiClient() { }
         
         public Guid Id => _id;
         private readonly Guid _id;
@@ -30,6 +33,16 @@ namespace Identity.Domain.Entities.ApiClientAggregate
 
         public Guid UserId => _userId;
         private readonly Guid _userId;
+        
+        public void UpdateName(string name)
+        {
+            Name = name;
+        }
+
+        public void UpdateDescription(string? description)
+        {
+            Description = description;
+        }
 
         public void AddDynamicRole(DynamicRole dynamicRole)
         {
@@ -40,15 +53,60 @@ namespace Identity.Domain.Entities.ApiClientAggregate
         {
             DynamicRoles.Remove(dynamicRole);
         }
-
-        public void UpdateName(string name)
+        
+        public void ClearDynamicRoles()
         {
-            Name = name;
+            DynamicRoles.Clear();
         }
 
-        public void UpdateDescription(string? description)
+        // DynamicRole methods
+        public void UpdateDynamicRoleName(Guid dynamicRoleId, string name)
         {
-            Description = description;
+            var dynamicRole = DynamicRoles.FirstOrDefault(dr => dr?.Id == dynamicRoleId);
+            if (dynamicRole is null) return;
+            dynamicRole.UpdateName(name);
+        }
+
+        public void UpdateDynamicRoleDescription(Guid dynamicRoleId, string description)
+        {
+            var dynamicRole = DynamicRoles.FirstOrDefault(dr => dr?.Id == dynamicRoleId);
+            if (dynamicRole is null) return;
+            dynamicRole.UpdateDescription(description);
+        }
+
+        public void AddDynamicRoleUser(Guid dynamicRoleId, Guid userId)
+        {
+            var dynamicRole = DynamicRoles.FirstOrDefault(dr => dr?.Id == dynamicRoleId);
+            if (dynamicRole is null) return;
+            dynamicRole.AddUser(userId);
+        }
+
+        public void RemoveDynamicRoleUser(Guid dynamicRoleId, Guid userId)
+        {
+            var dynamicRole = DynamicRoles.FirstOrDefault(dr => dr?.Id == dynamicRoleId);
+            if (dynamicRole is null) return;
+            dynamicRole.RemoveUser(userId);
+        }
+
+        public void ClearDynamicRoleUsers(Guid dynamicRoleId)
+        {
+            var dynamicRole = DynamicRoles.FirstOrDefault(dr => dr?.Id == dynamicRoleId);
+            if (dynamicRole is null) return;
+            dynamicRole.ClearUsers();
+        }
+
+        public void AddDynamicRoleUsers(Guid dynamicRoleId, List<Guid?> userIds)
+        {
+            var dynamicRole = DynamicRoles.FirstOrDefault(dr => dr?.Id == dynamicRoleId);
+            if (dynamicRole is null) return;
+            dynamicRole.AddUsers(userIds);
+        }
+
+        public void RemoveDynamicRoleUsers(Guid dynamicRoleId, List<Guid?> userIds)
+        {
+            var dynamicRole = DynamicRoles.FirstOrDefault(dr => dr?.Id == dynamicRoleId);
+            if (dynamicRole is null) return;
+            dynamicRole.RemoveUsers(userIds);
         }
     }
 }

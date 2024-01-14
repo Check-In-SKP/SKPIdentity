@@ -8,7 +8,6 @@ namespace Identity.Domain.Repositories
 {
     public interface IUnitOfWork : IDisposable
     {
-        IDynamicRoleRepository DynamicRoleRepository { get; }
         IUserRepository UserRepository { get; }
         ISessionRepository SessionRepository { get; }
         IApiClientRepository ApiClientRepository { get; }
