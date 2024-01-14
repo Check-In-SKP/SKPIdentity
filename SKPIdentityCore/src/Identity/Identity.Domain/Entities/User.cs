@@ -1,4 +1,5 @@
 ﻿using Identity.Domain.Common;
+using Identity.Domain.Entities.Enums;
 
 namespace Identity.Domain.Entities
 {
@@ -64,5 +65,121 @@ namespace Identity.Domain.Entities
         // (Bidirectional relationship)
         public List<Guid?> ApiClientIds { get => _apiClientIds; private set => _apiClientIds = value; }
         private List<Guid?> _apiClientIds;
+
+        public void UpdateUsername(string username)
+        {
+            Username = username;
+        }
+
+        public void UpdateFirstName(string firstName)
+        {
+            FirstName = firstName;
+        }
+
+        public void UpdateLastName(string lastName)
+        {
+            LastName = lastName;
+        }
+
+        public void UpdateEmail(string email)
+        {
+            Email = email;
+        }
+
+        public void EmailConfirmed()
+        {
+            if (!IsEmailConfirmed)
+                IsEmailConfirmed = true;
+        }
+
+        public void Lock()
+        {
+            if (!IsLocked)
+                IsLocked = true;
+        }
+
+        public void Unlock()
+        {
+            if (IsLocked)
+                IsLocked = false;
+        }
+
+        public void UpdatePasswordHash(string passwordHash)
+        {
+            PasswordHash = passwordHash;
+        }
+
+        public void AddRole(int role)
+        {
+            if (!Roles.Contains(role))
+                Roles.Add(role);
+        }
+
+        public void RemoveRole(int role)
+        {
+            Roles.Remove(role);
+        }
+
+        public void ClearRoles()
+        {
+            Roles.Clear();
+        }
+
+        // Implement event for bidirectional relationship
+        public void AddDynamicRoleId(Guid? dynamicRoleId)
+        {
+            if (!DynamicRoleIds.Contains(dynamicRoleId))
+                DynamicRoleIds.Add(dynamicRoleId);
+        }
+
+        // Implement event for bidirectional relationship
+        public void RemoveDynamicRoleId(Guid? dynamicRoleId)
+        {
+            DynamicRoleIds.Remove(dynamicRoleId);
+        }
+
+        // Implement event for bidirectional relationship
+        public void ClearDynamicRoleIds()
+        {
+            DynamicRoleIds.Clear();
+        }
+
+        // Implement event for bidirectional relationship
+        public void AddSessionId(Guid? sessionId)
+        {
+            if (!SessionIds.Contains(sessionId))
+                SessionIds.Add(sessionId);
+        }
+
+        // Implement event for bidirectional relationship
+        public void RemoveSessionId(Guid? sessionId)
+        {
+            SessionIds.Remove(sessionId);
+        }
+
+        // Implement event for bidirectional relationship
+        public void ClearSessionIds()
+        {
+            SessionIds.Clear();
+        }
+
+        // Implement event for bidirectional relationship
+        public void AddApiClientId(Guid? apiClientId)
+        {
+            if (!ApiClientIds.Contains(apiClientId))
+                ApiClientIds.Add(apiClientId);
+        }
+
+        // Implement event for bidirectional relationship
+        public void RemoveApiClientId(Guid? apiClientId)
+        {
+            ApiClientIds.Remove(apiClientId);
+        }
+
+        // Implement event for bidirectional relationship
+        public void ClearApiClientIds()
+        {
+            ApiClientIds.Clear();
+        }
     }
 }

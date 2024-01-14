@@ -6,5 +6,6 @@
         Admin = 1,
         User = 2,
         ApiClient = 3,
+        Guest = 4
     }
 }

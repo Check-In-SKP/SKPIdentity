@@ -30,5 +30,25 @@ namespace Identity.Domain.Entities.ApiClientAggregate
 
         public Guid UserId => _userId;
         private readonly Guid _userId;
+
+        public void AddDynamicRole(DynamicRole dynamicRole)
+        {
+            DynamicRoles.Add(dynamicRole);
+        }
+
+        public void RemoveDynamicRole(DynamicRole dynamicRole)
+        {
+            DynamicRoles.Remove(dynamicRole);
+        }
+
+        public void UpdateName(string name)
+        {
+            Name = name;
+        }
+
+        public void UpdateDescription(string? description)
+        {
+            Description = description;
+        }
     }
 }

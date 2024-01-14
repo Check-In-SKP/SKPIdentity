@@ -31,5 +31,10 @@ namespace Identity.Domain.Entities
 
         public Guid UserId => _userId;
         private readonly Guid _userId;
+
+        public void Revoke()
+        {
+            IsRevoked = true;
+        }
     }
 }
