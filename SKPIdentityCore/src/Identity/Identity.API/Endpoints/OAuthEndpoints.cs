@@ -1,5 +1,5 @@
 ﻿using Identity.Application.Common.Services.Interfaces;
-using Identity.Infrastructure.Services.Models;
+using Identity.Infrastructure.Services.OAuthService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.IdentityModel.Tokens;

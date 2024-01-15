@@ -1,7 +1,7 @@
 ﻿using Identity.Application.Common.Services.Interfaces;
 using Microsoft.AspNetCore.DataProtection;
 
-namespace Identity.Infrastructure.Services
+namespace Identity.Infrastructure.Services.OAuthService
 {
     public class DataProtectorService : IDataProtectorService
     {

@@ -1,5 +1,4 @@
 ﻿using Identity.Application.Common.Services.Interfaces;
-using Identity.Infrastructure.Services.Models;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Infrastructure.Services
+namespace Identity.Infrastructure.Services.OAuthService
 {
     public class AuthService : IAuthService
     {

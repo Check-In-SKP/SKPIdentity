@@ -10,7 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Infrastructure.Services
+namespace Identity.Infrastructure.Services.TokenService
 {
     public class TokenService : ITokenService
     {
