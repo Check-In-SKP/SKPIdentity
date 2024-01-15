@@ -17,7 +17,7 @@ namespace Identity.API.Endpoints
             app.MapGet("/login", GetLoginHandler);
             app.MapPost("/login", LoginHandler);
             app.MapGet("/oauth/authorize", AuthorizeHandler);
-            app.MapPost("/oauth/token", TokenHandler);
+            //app.MapPost("/oauth/token", TokenHandler);
         }
 
         private static async Task<IResult> GetLoginHandler(string returnUrl, HttpResponse response)

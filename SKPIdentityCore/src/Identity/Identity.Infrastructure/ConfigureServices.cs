@@ -3,6 +3,7 @@ using Identity.Domain.Repositories;
 using Identity.Infrastructure.Persistence;
 using Identity.Infrastructure.Repositories;
 using Identity.Infrastructure.Services;
+using Identity.Infrastructure.Services.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ namespace Identity.Infrastructure
             services.AddDbContext<IdentityDbContext>(options => options.UseNpgsql(connectionString));
 
             // Infrastructure and Application Services
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             services.AddScoped<IDataProtectorService, DataProtectorService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenService, TokenService>();

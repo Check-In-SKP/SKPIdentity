@@ -4,14 +4,15 @@ namespace Identity.Domain.Entities
 {
     public class Session : BaseEntity
     {
-        public Session(Guid id, string refreshToken, string ipAddress, Guid DeviceId, Guid UserId)
+        public Session(Guid id, string refreshToken, string ipAddress, Guid deviceId, string userAgent, Guid userId)
         {
             _id = id;
             _refreshToken = refreshToken;
             _isRevoked = false;
             _ipAddress = ipAddress;
-            _deviceId = DeviceId;
-            _userId = UserId;
+            _deviceId = deviceId;
+            _userAgent = userAgent;
+            _userId = userId;
         }
 
         // EF Core constructor
@@ -31,6 +32,9 @@ namespace Identity.Domain.Entities
 
         public Guid DeviceId => _deviceId;
         private readonly Guid _deviceId;
+
+        public string UserAgent => _userAgent;
+        private readonly string _userAgent;
 
         public Guid UserId => _userId;
         private readonly Guid _userId;
