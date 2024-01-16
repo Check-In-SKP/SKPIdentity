@@ -33,7 +33,6 @@ namespace Identity.Infrastructure
             // Infrastructure services
             services.AddScoped<IKeyManager>(provider => new KeyManager(keyDirectory));
 
-            // Infrastructure and Application Services
             services.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo(keyDirectory))
                 .SetApplicationName("SKPIdentity");

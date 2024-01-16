@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Identity.Infrastructure.Services.Interfaces;
 
 internal class Program
 {
@@ -27,35 +28,55 @@ internal class Program
         builder.Services.AddApplicationServices();
         builder.Services.AddInfrastructureServices(builder.Configuration);
 
-        #region JWT
-        //// Configure JWT Authentication
-        //var jwtKey = builder.Configuration["JwtSettings:Secret"];
-        //var rsaPublicKey = LoadRsaPublicKey(builder.Configuration);
-
-        //if (string.IsNullOrEmpty(jwtKey))
-        //    throw new Exception("JWT Key is missing from configuration file.");
-
-        //// Configure Authentication for HMAC-based ID Tokens and RSA-based Access Tokens
-        //builder.Services.AddAuthentication(options =>
-        //{
-        //    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        //}).AddJwtBearer(options =>
-        //{
-        //    options.TokenValidationParameters = new TokenValidationParameters
+        #region JWT Authentication
+        //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        //    .AddJwtBearer(options =>
         //    {
-        //        ValidateIssuer = true,
-        //        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-        //        ValidateAudience = true,
-        //        ValidAudience = builder.Configuration["JwtSettings:Audience"],
-        //        ValidateLifetime = true,
-        //        ValidateIssuerSigningKey = true,
-        //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-        //        IssuerSigningKeyResolver = (token, securityToken, keyIdentifier, validationParameters) =>
+        //        options.TokenValidationParameters = new TokenValidationParameters
         //        {
-        //            return new[] { new RsaSecurityKey(rsaPublicKey) };
-        //        }
-        //    };
-        //});
+        //            ValidateIssuerSigningKey = true,
+        //            IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
+        //            {
+        //                // Use KeyManager to get the public key
+        //                var keyManager = services.BuildServiceProvider().GetService<IKeyManager>();
+        //                var publicKey = keyManager.GetPublicKeyAsync().Result;
+        //                return new List<SecurityKey> { publicKey };
+        //            },
+        //            ValidateIssuer = true,
+        //            ValidateAudience = true,
+        //            ValidIssuer = configuration["JwtSettings:Issuer"],
+        //            ValidAudience = configuration["JwtSettings:Audience"]
+        //        };
+        //    });
+
+        // Configure JWT Authentication
+        var jwtKey = builder.Configuration["JwtSettings:Secret"];
+        var rsaPublicKey = LoadRsaPublicKey(builder.Configuration);
+
+        if (string.IsNullOrEmpty(jwtKey))
+            throw new Exception("JWT Key is missing from configuration file.");
+
+        // Configure Authentication for HMAC-based ID Tokens and RSA-based Access Tokens
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                IssuerSigningKeyResolver = (token, securityToken, keyIdentifier, validationParameters) =>
+                {
+                    return new[] { new RsaSecurityKey(rsaPublicKey) };
+                }
+            };
+        });
 
         //// Authentication
         //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -70,6 +91,9 @@ internal class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseHttpsRedirection();
 
