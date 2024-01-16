@@ -17,9 +17,9 @@ namespace Identity.Application.User.Commands
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBCryptPasswordHasher _passwordHasher;
-        private readonly ITokenService _tokenService;
+        private readonly ITokenProvider _tokenService;
 
-        public LoginUserCommandHandler(IUnitOfWork unitOfWork, IBCryptPasswordHasher passwordHasher, ITokenService tokenService)
+        public LoginUserCommandHandler(IUnitOfWork unitOfWork, IBCryptPasswordHasher passwordHasher, ITokenProvider tokenService)
         {
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;

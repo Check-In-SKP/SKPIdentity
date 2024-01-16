@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Infrastructure.Services.TokenService.TokenService
+namespace Identity.Infrastructure.Models
 {
     public record JwtSettings
     {

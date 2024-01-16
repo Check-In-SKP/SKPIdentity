@@ -1,5 +1,5 @@
 ﻿using Identity.Application.Common.Services.Interfaces;
-using Identity.Infrastructure.Services.OAuthService;
+using Identity.Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.IdentityModel.Tokens;
@@ -101,7 +101,7 @@ namespace Identity.API.Endpoints
             return Results.Redirect(responseUri);
         }
 
-        private static async Task<IResult> TokenHandler(HttpRequest request, ITokenService tokenService, IAuthService authService, IDataProtectionProvider dataProtectionProvider)
+        private static async Task<IResult> TokenHandler(HttpRequest request, ITokenProvider tokenService, IAuthService authService, IDataProtectionProvider dataProtectionProvider)
         {
             var bodyContent = await new StreamReader(request.Body).ReadToEndAsync();
             var parsedContent = HttpUtility.ParseQueryString(bodyContent);

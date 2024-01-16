@@ -1,6 +1,6 @@
 ﻿namespace Identity.Application.Common.Services.Interfaces
 {
-    public interface ITokenService
+    public interface ITokenProvider
     {
     }
 }

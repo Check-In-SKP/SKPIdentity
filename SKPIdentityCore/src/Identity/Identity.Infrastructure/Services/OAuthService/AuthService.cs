@@ -1,4 +1,5 @@
 ﻿using Identity.Application.Common.Services.Interfaces;
+using Identity.Infrastructure.Models;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Collections.Generic;
