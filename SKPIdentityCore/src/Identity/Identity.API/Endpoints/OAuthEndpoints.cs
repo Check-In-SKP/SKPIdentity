@@ -101,59 +101,59 @@ namespace Identity.API.Endpoints
             return Results.Redirect(responseUri);
         }
 
-        private static async Task<IResult> TokenHandler(HttpRequest request, ITokenProvider tokenService, IAuthService authService, IDataProtectionProvider dataProtectionProvider)
-        {
-            var bodyContent = await new StreamReader(request.Body).ReadToEndAsync();
-            var parsedContent = HttpUtility.ParseQueryString(bodyContent);
+        //private static async Task<IResult> TokenHandler(HttpRequest request, ITokenProvider tokenService, IAuthService authService, IDataProtectionProvider dataProtectionProvider)
+        //{
+        //    var bodyContent = await new StreamReader(request.Body).ReadToEndAsync();
+        //    var parsedContent = HttpUtility.ParseQueryString(bodyContent);
 
-            var grantType = parsedContent["grant_type"];
-            var code = parsedContent["code"];
-            var redirectUri = parsedContent["redirect_uri"];
-            var codeVerifier = parsedContent["code_verifier"];
+        //    var grantType = parsedContent["grant_type"];
+        //    var code = parsedContent["code"];
+        //    var redirectUri = parsedContent["redirect_uri"];
+        //    var codeVerifier = parsedContent["code_verifier"];
 
-            if (grantType != "authorization_code")
-            {
-                return Results.BadRequest("Unsupported grant type");
-            }
+        //    if (grantType != "authorization_code")
+        //    {
+        //        return Results.BadRequest("Unsupported grant type");
+        //    }
 
-            var protector = dataProtectionProvider.CreateProtector("OAuth");
-            AuthCode authCode;
-            try
-            {
-                var unprotectedCode = protector.Unprotect(code);
-                authCode = JsonSerializer.Deserialize<AuthCode>(unprotectedCode);
-            }
-            catch
-            {
-                return Results.BadRequest("Invalid code");
-            }
+        //    var protector = dataProtectionProvider.CreateProtector("OAuth");
+        //    AuthCode authCode;
+        //    try
+        //    {
+        //        var unprotectedCode = protector.Unprotect(code);
+        //        authCode = JsonSerializer.Deserialize<AuthCode>(unprotectedCode);
+        //    }
+        //    catch
+        //    {
+        //        return Results.BadRequest("Invalid code");
+        //    }
 
-            if (authCode == null || !authService.ValidateCodeVerifier(authCode, codeVerifier))
-            {
-                return Results.BadRequest("Invalid code verifier");
-            }
+        //    if (authCode == null || !authService.ValidateCodeVerifier(authCode, codeVerifier))
+        //    {
+        //        return Results.BadRequest("Invalid code verifier");
+        //    }
 
-            // Ensure that the auth code hasn't expired and redirectUri matches
-            if (authCode.Expiry < DateTimeOffset.UtcNow || authCode.RedirectUri != redirectUri)
-            {
-                return Results.BadRequest("Invalid or expired authorization code");
-            }
+        //    // Ensure that the auth code hasn't expired and redirectUri matches
+        //    if (authCode.Expiry < DateTimeOffset.UtcNow || authCode.RedirectUri != redirectUri)
+        //    {
+        //        return Results.BadRequest("Invalid or expired authorization code");
+        //    }
 
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, authCode.ClientId)
-            };
+        //    var claims = new List<Claim>
+        //    {
+        //        new Claim(JwtRegisteredClaimNames.Sub, authCode.ClientId)
+        //    };
 
-            var accessToken = tokenService.GenerateAccessToken(claims);
-            var refreshToken = tokenService.GenerateRefreshToken();
+        //    var accessToken = tokenService.GenerateAccessToken(claims);
+        //    var refreshToken = tokenService.GenerateRefreshToken();
 
-            return Results.Ok(new
-            {
-                access_token = accessToken,
-                refresh_token = refreshToken,
-                token_type = "Bearer",
-                expires_in = 900 // 15 minutes
-            });
-        }
+        //    return Results.Ok(new
+        //    {
+        //        access_token = accessToken,
+        //        refresh_token = refreshToken,
+        //        token_type = "Bearer",
+        //        expires_in = 900 // 15 minutes
+        //    });
+        //}
     }
 }
