@@ -1,5 +1,5 @@
 ﻿using Identity.Application.Common.Services.Interfaces;
-using Identity.Infrastructure.Models;
+//using Identity.Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +16,7 @@ namespace Identity.API.Endpoints
         {
             app.MapGet("/login", GetLoginHandler);
             app.MapPost("/login", LoginHandler);
-            app.MapGet("/oauth/authorize", AuthorizeHandler);
+            //app.MapGet("/oauth/authorize", AuthorizeHandler);
             //app.MapPost("/oauth/token", TokenHandler);
         }
 
@@ -70,36 +70,36 @@ namespace Identity.API.Endpoints
             return Results.Redirect(string.IsNullOrEmpty(returnUrl) ? "/" : returnUrl);
         }
 
-        private static IResult AuthorizeHandler(HttpContext ctx, IDataProtectionProvider dataProtectionProvider)
-        {
-            var queryParams = ctx.Request.Query;
-            var clientId = queryParams["client_id"];
-            var codeChallenge = queryParams["code_challenge"];
-            var codeChallengeMethod = queryParams["code_challenge_method"];
-            var redirectUri = queryParams["redirect_uri"];
-            var scope = queryParams["scope"];
-            var state = queryParams["state"];
+        //private static IResult AuthorizeHandler(HttpContext ctx, IDataProtectionProvider dataProtectionProvider)
+        //{
+        //    var queryParams = ctx.Request.Query;
+        //    var clientId = queryParams["client_id"];
+        //    var codeChallenge = queryParams["code_challenge"];
+        //    var codeChallengeMethod = queryParams["code_challenge_method"];
+        //    var redirectUri = queryParams["redirect_uri"];
+        //    var scope = queryParams["scope"];
+        //    var state = queryParams["state"];
 
-            if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(codeChallenge) || string.IsNullOrEmpty(redirectUri))
-            {
-                return Results.BadRequest("Missing required parameters");
-            }
+        //    if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(codeChallenge) || string.IsNullOrEmpty(redirectUri))
+        //    {
+        //        return Results.BadRequest("Missing required parameters");
+        //    }
 
-            var authCode = new AuthCode
-            {
-                ClientId = clientId,
-                CodeChallenge = codeChallenge,
-                CodeChallengeMethod = codeChallengeMethod,
-                RedirectUri = redirectUri,
-                Expiry = DateTime.UtcNow.AddMinutes(5)
-            };
+        //    var authCode = new AuthCode
+        //    {
+        //        ClientId = clientId,
+        //        CodeChallenge = codeChallenge,
+        //        CodeChallengeMethod = codeChallengeMethod,
+        //        RedirectUri = redirectUri,
+        //        Expiry = DateTime.UtcNow.AddMinutes(5)
+        //    };
 
-            var protector = dataProtectionProvider.CreateProtector("OAuth");
-            var protectedCode = protector.Protect(JsonSerializer.Serialize(authCode));
+        //    var protector = dataProtectionProvider.CreateProtector("OAuth");
+        //    var protectedCode = protector.Protect(JsonSerializer.Serialize(authCode));
 
-            var responseUri = $"{redirectUri}?code={protectedCode}&state={state}";
-            return Results.Redirect(responseUri);
-        }
+        //    var responseUri = $"{redirectUri}?code={protectedCode}&state={state}";
+        //    return Results.Redirect(responseUri);
+        //}
 
         //private static async Task<IResult> TokenHandler(HttpRequest request, ITokenProvider tokenService, IAuthService authService, IDataProtectionProvider dataProtectionProvider)
         //{

@@ -5,7 +5,6 @@ using Identity.Infrastructure.Persistence;
 using Identity.Infrastructure.Repositories;
 using Identity.Infrastructure.Services;
 using Identity.Infrastructure.Services.Interfaces;
-using Identity.Infrastructure.Services.OAuthService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,21 +15,27 @@ namespace Identity.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+            // Configure JwtSettings with a configuration action
+            services.Configure<JwtSettings>(options =>
+            {
+                options.Issuer = configuration.GetSection("JwtSettings:Issuer")?.Value ?? "default-issuer";
+                options.Audience = configuration.GetSection("JwtSettings:Audience")?.Value ?? "default-audience";
+            });
 
             // DbContext
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<IdentityDbContext>(options => options.UseNpgsql(connectionString));
 
             // Infrastructure services
-            services.AddScoped<IKeyManager, KeyManager>();
-            services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+            string keyPath = configuration.GetSection("KeyPath").Value ?? "./Keys";
+            services.AddScoped<IKeyManager>(provider => new KeyManager(keyPath));
 
             // Infrastructure and Application Services
             services.AddScoped<IDataProtectorService, DataProtectorService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenProvider, TokenProvider>();
             services.AddScoped<IBCryptPasswordHasher, BCryptPasswordHasher>();
+            services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
             // Repositories
             services.AddScoped<IUserRepository, UserRepository>();

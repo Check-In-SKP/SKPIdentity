@@ -2,5 +2,7 @@
 {
     public interface IDataProtectorService
     {
+        public string Protect(string input);
+        public string Unprotect(string input);
     }
 }

@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Infrastructure.Services.OAuthService
+namespace Identity.Infrastructure.Services
 {
     public class AuthService : IAuthService
     {

@@ -27,6 +27,7 @@ internal class Program
         builder.Services.AddApplicationServices();
         builder.Services.AddInfrastructureServices(builder.Configuration);
 
+        #region JWT
         //// Configure JWT Authentication
         //var jwtKey = builder.Configuration["JwtSettings:Secret"];
         //var rsaPublicKey = LoadRsaPublicKey(builder.Configuration);
@@ -59,6 +60,7 @@ internal class Program
         //// Authentication
         //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         //    .AddCookie(options => options.LoginPath = "/login");
+        #endregion
 
         var app = builder.Build();
 
