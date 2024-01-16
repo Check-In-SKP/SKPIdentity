@@ -5,6 +5,7 @@ using Identity.Infrastructure.Persistence;
 using Identity.Infrastructure.Repositories;
 using Identity.Infrastructure.Services;
 using Identity.Infrastructure.Services.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,9 @@ namespace Identity.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            // Get's the directory for storing keys - Defaults to "./Vault/" if no path is defined in configuration
+            string keyDirectory = configuration.GetSection("KeyDirectory").Value ?? "./Vault/";
+
             // Configure JwtSettings with a configuration action
             services.Configure<JwtSettings>(options =>
             {
@@ -27,10 +31,13 @@ namespace Identity.Infrastructure
             services.AddDbContext<IdentityDbContext>(options => options.UseNpgsql(connectionString));
 
             // Infrastructure services
-            string keyPath = configuration.GetSection("KeyPath").Value ?? "./Keys";
-            services.AddScoped<IKeyManager>(provider => new KeyManager(keyPath));
+            services.AddScoped<IKeyManager>(provider => new KeyManager(keyDirectory));
 
             // Infrastructure and Application Services
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(keyDirectory))
+                .SetApplicationName("SKPIdentity");
+
             services.AddScoped<IDataProtectorService, DataProtectorService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenProvider, TokenProvider>();

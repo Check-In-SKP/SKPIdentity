@@ -12,14 +12,14 @@ namespace Identity.Infrastructure.Services
 
     public class KeyManager : IKeyManager
     {
-        private readonly string _keyPath;
+        private readonly string _keyDirectory;
         private readonly AsyncLazy<RSA> _rsaLazy;
         private readonly AsyncLazy<byte[]> _hmacLazy;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
-        public KeyManager(string keyPath)
+        public KeyManager(string keyDirectory)
         {
-            _keyPath = keyPath;
+            _keyDirectory = keyDirectory;
             _rsaLazy = new AsyncLazy<RSA>(() => LoadOrCreateKeyAsync<RSA>("RSAKey.json"));
             _hmacLazy = new AsyncLazy<byte[]>(() => LoadOrCreateKeyAsync<byte[]>("HMACKey.json"));
         }
@@ -42,7 +42,7 @@ namespace Identity.Infrastructure.Services
             await _semaphore.WaitAsync();
             try
             {
-                string filePath = Path.Combine(_keyPath, keyFileName);
+                string filePath = Path.Combine(_keyDirectory, keyFileName);
 
                 // Ensure the directory structure exists
                 string directoryPath = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("No path was provided");
