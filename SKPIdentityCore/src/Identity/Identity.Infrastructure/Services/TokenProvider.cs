@@ -1,5 +1,7 @@
 ﻿using Identity.Application.Common.Services.Interfaces;
+using Identity.Infrastructure.Models;
 using Identity.Infrastructure.Services.Interfaces;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -11,23 +13,27 @@ namespace Identity.Infrastructure.Services
     public class TokenProvider : ITokenProvider
     {
         private readonly IKeyManager _keyManager;
+        private readonly JwtSettings _jwtSettings;
 
-        public TokenProvider(IKeyManager keyManager)
+        public TokenProvider(IOptions<JwtSettings> jwtSettings, IKeyManager keyManager)
         {
+            _jwtSettings = jwtSettings.Value;
             _keyManager = keyManager;
         }
 
-        // Using Hmac encryption for internal authentication only (more performance friendly)
+        // Uses Hmac encryption for internal authentication (more performance friendly)
         public string GenerateIdToken(IEnumerable<Claim> claims, int expiryInMinutes)
         {
             // Get's key from KeyManager
             var hmacKey = _keyManager.HmacKeyAsync.ToString() ?? throw new InvalidOperationException("Key data is null.");
 
-            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(hmacKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(hmacKey));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var jwt = new JwtSecurityToken(
                 claims: claims,
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
                 expires: DateTime.UtcNow.AddMinutes(expiryInMinutes),
                 signingCredentials: signingCredentials
             );
@@ -43,6 +49,8 @@ namespace Identity.Infrastructure.Services
 
             var jwt = new JwtSecurityToken(
                 claims: claims,
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
                 expires: DateTime.UtcNow.AddMinutes(expiryInMinutes),
                 signingCredentials: signingCredentials
             );

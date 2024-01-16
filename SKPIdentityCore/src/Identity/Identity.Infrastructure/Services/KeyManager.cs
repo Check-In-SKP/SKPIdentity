@@ -25,8 +25,12 @@ namespace Identity.Infrastructure.Services
 
         public async Task<RsaSecurityKey> GetPublicKeyAsync()
         {
-            RSA rsaKey = await PrivateKeyAsync;
-            return new RsaSecurityKey(rsaKey);
+            RSA? rsaKey = await PrivateKeyAsync;
+            
+            if (rsaKey != null)
+                return new RsaSecurityKey(rsaKey);
+            else
+                throw new InvalidOperationException("RSA key is null.");
         }
 
         private async Task<T> LoadOrCreateKeyAsync<T>(string keyFileName)
