@@ -13,63 +13,56 @@ namespace Identity.Infrastructure.Services
     public class KeyManager : IKeyManager
     {
         private readonly string _keyDirectory;
-        private readonly AsyncLazy<RSA> _rsaKeyPairLazy; // Contains both private and public keys - If you were confused like me :)
-        private readonly AsyncLazy<byte[]> _hmacLazy; // Not in use for this project but nice to have.
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1); // Used for thread locking
+        private readonly AsyncLazy<RSAParameters> _publicRsaKeyParametersLazy;
+        private readonly AsyncLazy<RSAParameters> _privateRsaKeyParametersLazy;
+        private readonly AsyncLazy<byte[]> _hmacLazy;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public KeyManager(string keyDirectory)
         {
             _keyDirectory = keyDirectory;
-            _rsaKeyPairLazy = new AsyncLazy<RSA>(() => LoadOrCreateKeyAsync<RSA>("RSAKey.json"));
+            _publicRsaKeyParametersLazy = new AsyncLazy<RSAParameters>(() => LoadOrCreateKeyAsync<RSAParameters>("PublicRSAKey.json", false));
+            _privateRsaKeyParametersLazy = new AsyncLazy<RSAParameters>(() => LoadOrCreateKeyAsync<RSAParameters>("PrivateRSAKey.json", true));
             _hmacLazy = new AsyncLazy<byte[]>(() => LoadOrCreateKeyAsync<byte[]>("HMACKey.json"));
         }
 
-        public Task<RSA> RsaKeyPairAsync => _rsaKeyPairLazy.Value;
+        public Task<RSAParameters> PublicRsaKeyParametersAsync => _publicRsaKeyParametersLazy.Value;
+        public Task<RSAParameters> PrivateRsaKeyParametersAsync => _privateRsaKeyParametersLazy.Value;
         public Task<byte[]> HmacKeyAsync => _hmacLazy.Value;
 
-        public async Task<RsaSecurityKey> GetPrivateRsaKeyAsync()
+        public async Task<RsaSecurityKey> GetPublicRsaSecurityKeyAsync()
         {
-            RSA? rsaKey = await RsaKeyPairAsync;
-
-            if (rsaKey != null)
-                return new RsaSecurityKey(rsaKey); // This represents the private key (used for signing)
-            else
-                throw new InvalidOperationException("RSA key pair is null.");
+            RSAParameters rsaParameters = await PublicRsaKeyParametersAsync;
+            return new RsaSecurityKey(rsaParameters);
         }
 
-        public async Task<RsaSecurityKey> GetPublicRsaKeyAsync()
+        public async Task<RsaSecurityKey> GetPrivateRsaSecurityKeyAsync()
         {
-            RSA? rsaKey = await RsaKeyPairAsync;
-
-            if (rsaKey != null)
-                return new RsaSecurityKey(rsaKey.ExportParameters(false)); // This represents the public key (used for verifying)
-            else
-                throw new InvalidOperationException("RSA key pair is null.");
+            RSAParameters rsaParameters = await PrivateRsaKeyParametersAsync;
+            RSA rsa = RSA.Create();
+            rsa.ImportParameters(rsaParameters);
+            return new RsaSecurityKey(rsa);
         }
 
-        private async Task<T> LoadOrCreateKeyAsync<T>(string keyFileName)
+        private async Task<T> LoadOrCreateKeyAsync<T>(string keyFileName, bool includePrivateParameters = false)
         {
             await _semaphore.WaitAsync();
             try
             {
                 string filePath = Path.Combine(_keyDirectory, keyFileName);
-
-                // Ensure the directory structure exists
                 string directoryPath = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("No path was provided");
-                if(directoryPath != null)
+                if (directoryPath != null)
                     Directory.CreateDirectory(directoryPath);
 
                 if (File.Exists(filePath))
                 {
                     string keyData = await File.ReadAllTextAsync(filePath);
                     var key = JsonConvert.DeserializeObject<T>(keyData);
-
-                    return key == null ? throw new InvalidOperationException("Key data is null.") : key;
+                    return key ?? throw new InvalidOperationException("Key data is null.");
                 }
                 else
                 {
-                    // Generate a new key and save it to the JSON file
-                    T newKey = GenerateRandomKey<T>();
+                    T newKey = GenerateRandomKey<T>(includePrivateParameters);
                     string keyData = JsonConvert.SerializeObject(newKey);
                     await File.WriteAllTextAsync(filePath, keyData);
                     return newKey;
@@ -85,11 +78,11 @@ namespace Identity.Infrastructure.Services
             }
         }
 
-        private static T GenerateRandomKey<T>()
+        private static T GenerateRandomKey<T>(bool includePrivateParameters = false)
         {
             if (typeof(T) == typeof(byte[]))
             {
-                // Generate a random byte array for HMAC key
+                // HMAC key generation
                 var hmacKey = new byte[64];
                 using (var rng = RandomNumberGenerator.Create())
                 {
@@ -97,11 +90,11 @@ namespace Identity.Infrastructure.Services
                 }
                 return (T)(object)hmacKey;
             }
-            else if (typeof(T) == typeof(RSA))
+            else if (typeof(T) == typeof(RSAParameters))
             {
-                // Generate a new RSA key pair
+                // RSA key generation
                 using RSA rsa = RSA.Create();
-                return (T)(object)rsa;
+                return (T)(object)rsa.ExportParameters(includePrivateParameters);
             }
             else
             {
