@@ -13,28 +13,38 @@ namespace Identity.Infrastructure.Services
     public class KeyManager : IKeyManager
     {
         private readonly string _keyDirectory;
-        private readonly AsyncLazy<RSA> _rsaLazy;
-        private readonly AsyncLazy<byte[]> _hmacLazy;
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private readonly AsyncLazy<RSA> _rsaKeyPairLazy; // Contains both private and public keys - If you were confused like me :)
+        private readonly AsyncLazy<byte[]> _hmacLazy; // Not in use for this project but nice to have.
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1); // Used for thread locking
 
         public KeyManager(string keyDirectory)
         {
             _keyDirectory = keyDirectory;
-            _rsaLazy = new AsyncLazy<RSA>(() => LoadOrCreateKeyAsync<RSA>("RSAKey.json"));
+            _rsaKeyPairLazy = new AsyncLazy<RSA>(() => LoadOrCreateKeyAsync<RSA>("RSAKey.json"));
             _hmacLazy = new AsyncLazy<byte[]>(() => LoadOrCreateKeyAsync<byte[]>("HMACKey.json"));
         }
 
-        public Task<RSA> PrivateKeyAsync => _rsaLazy.Value;
+        public Task<RSA> RsaKeyPairAsync => _rsaKeyPairLazy.Value;
         public Task<byte[]> HmacKeyAsync => _hmacLazy.Value;
 
-        public async Task<RsaSecurityKey> GetPublicKeyAsync()
+        public async Task<RsaSecurityKey> GetPrivateRsaKeyAsync()
         {
-            RSA? rsaKey = await PrivateKeyAsync;
-            
+            RSA? rsaKey = await RsaKeyPairAsync;
+
             if (rsaKey != null)
-                return new RsaSecurityKey(rsaKey);
+                return new RsaSecurityKey(rsaKey); // This represents the private key (used for signing)
             else
-                throw new InvalidOperationException("RSA key is null.");
+                throw new InvalidOperationException("RSA key pair is null.");
+        }
+
+        public async Task<RsaSecurityKey> GetPublicRsaKeyAsync()
+        {
+            RSA? rsaKey = await RsaKeyPairAsync;
+
+            if (rsaKey != null)
+                return new RsaSecurityKey(rsaKey.ExportParameters(false)); // This represents the public key (used for verifying)
+            else
+                throw new InvalidOperationException("RSA key pair is null.");
         }
 
         private async Task<T> LoadOrCreateKeyAsync<T>(string keyFileName)

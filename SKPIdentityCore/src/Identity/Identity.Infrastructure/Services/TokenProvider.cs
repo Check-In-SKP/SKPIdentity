@@ -21,8 +21,8 @@ namespace Identity.Infrastructure.Services
             _keyManager = keyManager;
         }
 
-        // Uses Hmac encryption for internal authentication (more performance friendly)
-        public string GenerateIdToken(IEnumerable<Claim> claims, int expiryInMinutes)
+        // Uses Hmac signing encryption for internal authentication (more performance friendly)
+        public string GenerateHmacToken(IEnumerable<Claim> claims, int expiryInMinutes)
         {
             // Get's key from KeyManager
             var hmacKey = _keyManager.HmacKeyAsync.ToString() ?? throw new InvalidOperationException("Key data is null.");
@@ -41,10 +41,11 @@ namespace Identity.Infrastructure.Services
             return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
 
-        // Uses RSA encryption for 3rd party authentication
-        public async Task<string> GenerateAccessToken(IEnumerable<Claim> claims, int expiryInMinutes)
+        // Uses RSA signing encryption for 3rd party authentication
+        public async Task<string> GenerateRsaToken(IEnumerable<Claim> claims, int expiryInMinutes)
         {
-            var rsaKey = await _keyManager.GetPublicKeyAsync();
+            var rsaKey = await _keyManager.GetPrivateRsaKeyAsync();
+
             var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
 
             var jwt = new JwtSecurityToken(
@@ -58,6 +59,7 @@ namespace Identity.Infrastructure.Services
             return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
 
+        // Generates a random string
         public static string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
