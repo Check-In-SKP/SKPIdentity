@@ -42,7 +42,7 @@ namespace Identity.API.Endpoints
                                 </div>
                                 <div>
                                     <label for='password'>Password:</label><br>
-                                    input type='password' id='password' name='password' required>
+                                    <input type='password' id='password' name='password' required>
                                 </div>
                                 <input type='submit' value='Log In'>
                             </form>

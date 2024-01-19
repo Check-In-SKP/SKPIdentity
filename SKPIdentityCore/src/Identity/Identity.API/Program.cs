@@ -29,6 +29,7 @@ internal class Program
 
         // Add authentication service
         builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+        builder.Services.AddAuthorization();
 
         var app = builder.Build();
 
@@ -40,7 +41,7 @@ internal class Program
         }
 
         app.UseAuthentication();
-
+        app.UseAuthorization();
         app.UseHttpsRedirection();
 
         // OAuth Endpoints
