@@ -22,12 +22,11 @@ namespace Identity.Infrastructure.Services
         }
 
         // Uses Hmac signing encryption for internal authentication (more performance friendly)
-        public string GenerateHmacToken(IEnumerable<Claim> claims, int expiryInMinutes)
+        public async Task<string> GenerateHmacToken(IEnumerable<Claim> claims, int expiryInMinutes)
         {
-            // Get's key from KeyManager
-            var hmacKey = _keyManager.HmacKeyAsync.ToString() ?? throw new InvalidOperationException("Key data is null.");
+            var hmacKey = await _keyManager.HmacKeyAsync;
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(hmacKey));
+            var key = new SymmetricSecurityKey(hmacKey);
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var jwt = new JwtSecurityToken(
@@ -44,7 +43,7 @@ namespace Identity.Infrastructure.Services
         // Uses RSA signing encryption for 3rd party authentication
         public async Task<string> GenerateRsaToken(IEnumerable<Claim> claims, int expiryInMinutes)
         {
-            var rsaKey = await _keyManager.GetPrivateRsaKeyAsync();
+            var rsaKey = await _keyManager.GetPrivateRsaSecurityKeyAsync();
 
             var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
 

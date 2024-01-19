@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <Folder Include="Middleware\" />
+    <Folder Include="Vault\" />
   </ItemGroup>
 
 </Project>

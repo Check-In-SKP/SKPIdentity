@@ -10,9 +10,8 @@ namespace Identity.Infrastructure.Services.Interfaces
 {
     public interface IKeyManager
     {
-        Task<RsaSecurityKey> GetPrivateRsaKeyAsync();
-        Task<RsaSecurityKey> GetPublicRsaKeyAsync();
-        Task<RSA> RsaKeyPairAsync {  get; }
+        Task<RsaSecurityKey> GetPrivateRsaSecurityKeyAsync();
+        Task<RsaSecurityKey> GetPublicRsaSecurityKeyAsync();
         Task<byte[]> HmacKeyAsync {  get; }
     }
 }
