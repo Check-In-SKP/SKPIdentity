@@ -7,6 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 using Identity.Infrastructure.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Identity.API;
+using Identity.Infrastructure.Models.Enums;
+using System.Security.Claims;
+using Identity.Domain.Entities.Enums;
 
 internal class Program
 {
@@ -29,7 +32,41 @@ internal class Program
 
         // Add authentication service
         builder.Services.AddCustomJwtAuthentication(builder.Configuration);
-        builder.Services.AddAuthorization();
+        builder.Services.AddAuthorization(options =>
+        {
+            // Token types to restrict endpoint access to specific tokens
+            options.AddPolicy("RequireIdToken", policy =>
+                policy.RequireClaim("token_type", TokenType.IdToken.ToTokenString()));
+            options.AddPolicy("RequireAccessToken", policy =>
+                policy.RequireClaim("token_type", TokenType.AccessToken.ToTokenString()));
+            options.AddPolicy("RequireNFCToken", policy =>
+                policy.RequireClaim("token_type", TokenType.NFCToken.ToTokenString()));
+
+            // Roles that are allowed to access Admin authorized endpoints
+            options.AddPolicy("RequireAdminRole", policy =>
+                policy.RequireAssertion(context => 
+                    context.User.HasClaim(ClaimTypes.Role, Role.Admin.ToTokenString())));
+
+            // Roles that are allowed to access User authorized endpoints
+            options.AddPolicy("RequireUserRole", policy =>
+                //policy.RequireClaim(ClaimTypes.Role, Role.User.ToTokenString()));
+                policy.RequireAssertion(context =>
+                    context.User.HasClaim(ClaimTypes.Role, Role.User.ToTokenString()) ||
+                    context.User.HasClaim(ClaimTypes.Role, Role.Admin.ToTokenString())));
+
+            // Roles that are allowed to access ApiClient authorized endpoints
+            options.AddPolicy("RequireApiClientRole", policy =>
+                policy.RequireAssertion(context => 
+                    context.User.HasClaim(ClaimTypes.Role, Role.Admin.ToTokenString()) || 
+                    context.User.HasClaim(ClaimTypes.Role, Role.ApiClient.ToTokenString())));
+
+            // Roles that are allowed to access Guest authorized endpoints
+            options.AddPolicy("RequireGuestRole", policy =>
+                policy.RequireAssertion(context =>
+                    context.User.HasClaim(ClaimTypes.Role, Role.Guest.ToTokenString()) ||
+                    context.User.HasClaim(ClaimTypes.Role, Role.User.ToTokenString()) ||
+                    context.User.HasClaim(ClaimTypes.Role, Role.Admin.ToTokenString())));
+        });
 
         var app = builder.Build();
 

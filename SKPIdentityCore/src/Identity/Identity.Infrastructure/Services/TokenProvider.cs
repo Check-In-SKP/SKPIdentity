@@ -1,5 +1,6 @@
 ﻿using Identity.Application.Common.Services.Interfaces;
 using Identity.Infrastructure.Models;
+using Identity.Infrastructure.Models.Enums;
 using Identity.Infrastructure.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -22,9 +23,12 @@ namespace Identity.Infrastructure.Services
         }
 
         // Uses Hmac signing encryption for internal authentication (more performance friendly)
-        public async Task<string> GenerateHmacToken(IEnumerable<Claim> claims, int expiryInMinutes)
+        public async Task<string> GenerateHmacToken(IEnumerable<Claim> claims, int expiryInMinutes, TokenType tokenType)
         {
             var hmacKey = await _keyManager.HmacKeyAsync;
+
+            // Add TokenType claim
+            claims = claims.Concat(new[] { new Claim("TokenType", tokenType.ToTokenString()) });
 
             var key = new SymmetricSecurityKey(hmacKey);
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -41,9 +45,12 @@ namespace Identity.Infrastructure.Services
         }
 
         // Uses RSA signing encryption for 3rd party authentication
-        public async Task<string> GenerateRsaToken(IEnumerable<Claim> claims, int expiryInMinutes)
+        public async Task<string> GenerateRsaToken(IEnumerable<Claim> claims, int expiryInMinutes, TokenType tokenType)
         {
             var rsaKey = await _keyManager.GetPrivateRsaSecurityKeyAsync();
+
+            // Add TokenType claim
+            claims = claims.Concat(new[] { new Claim("token_type", tokenType.ToTokenString()) });
 
             var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
 
