@@ -11,7 +11,7 @@
 
     public static class RoleExtensions
     {
-        // Ensures that the enum matches the convention used in OAuth2.0
+        // Formats role to fit standard naming conventions (used for external systems)
         public static string ToTokenString(this Role role)
         {
             return role switch

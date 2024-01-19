@@ -15,7 +15,7 @@ namespace Identity.Infrastructure.Models.Enums
 
     public static class TokenTypeExtensions
     {
-        // Ensures that the enum matches the convention used in OAuth2.0
+        // Formats token type to fit standard naming conventions (used for external systems)
         public static string ToTokenString(this TokenType tokenType)
         {
             return tokenType switch
