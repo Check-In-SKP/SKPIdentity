@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Infrastructure.Models.Enums
+namespace Identity.SharedKernel.Models.Enums
 {
     public enum TokenType
     {

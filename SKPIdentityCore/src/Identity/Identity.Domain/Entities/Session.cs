@@ -4,6 +4,14 @@ namespace Identity.Domain.Entities
 {
     public class Session : BaseEntity
     {
+        private readonly Guid _id;
+        private string _refreshToken;
+        private bool _isRevoked;
+        private string _ipAddress;
+        private readonly Guid _deviceId;
+        private readonly string _userAgent;
+        private readonly Guid _userId;
+
         public Session(Guid id, string refreshToken, string ipAddress, Guid deviceId, string userAgent, Guid userId)
         {
             _id = id;
@@ -19,26 +27,15 @@ namespace Identity.Domain.Entities
         private Session() { }
 
         public Guid Id => _id;
-        private readonly Guid _id;
 
         public string RefreshToken { get => _refreshToken; private set => _refreshToken = value; }
-        private string _refreshToken;
-
         public bool IsRevoked { get => _isRevoked; private set => _isRevoked = value; }
-        private bool _isRevoked;
-
         public string IpAddress { get => _ipAddress; private set=> _ipAddress = value; }
-        private string _ipAddress;
-
         public Guid DeviceId => _deviceId;
-        private readonly Guid _deviceId;
-
         public string UserAgent => _userAgent;
-        private readonly string _userAgent;
-
         public Guid UserId => _userId;
-        private readonly Guid _userId;
 
+        // Session methods
         public void Revoke()
         {
             IsRevoked = true;

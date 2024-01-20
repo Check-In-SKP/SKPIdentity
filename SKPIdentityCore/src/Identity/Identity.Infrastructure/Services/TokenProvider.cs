@@ -1,6 +1,6 @@
 ﻿using Identity.Application.Common.Services.Interfaces;
 using Identity.Infrastructure.Models;
-using Identity.Infrastructure.Models.Enums;
+using Identity.SharedKernel.Models.Enums;
 using Identity.Infrastructure.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

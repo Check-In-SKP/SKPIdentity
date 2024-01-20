@@ -1,15 +1,10 @@
 using Identity.Infrastructure;
 using Identity.Application;
 using Identity.API.Endpoints;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Identity.Infrastructure.Services.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 using Identity.API;
-using Identity.Infrastructure.Models.Enums;
 using System.Security.Claims;
 using Identity.Domain.Entities.Enums;
+using Identity.SharedKernel.Models.Enums;
 
 internal class Program
 {

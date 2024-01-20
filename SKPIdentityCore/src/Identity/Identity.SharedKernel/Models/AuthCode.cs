@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Infrastructure.Models
+namespace Identity.SharedKernel.Models
 {
     public class AuthCode
     {

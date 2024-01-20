@@ -4,6 +4,13 @@ namespace Identity.Domain.Entities.ApiClientAggregate
 {
     public class ApiClient : BaseEntity
     {
+        private readonly Guid _id;
+        private readonly string _apiKey;
+        private string _name;
+        private string? _description;
+        private List<DynamicRole?> _dynamicRoles = new();
+        private readonly Guid _userId;
+
         public ApiClient(Guid id, string apiKey, string name, string? description, Guid userId)
         {
             _id = id;
@@ -17,23 +24,13 @@ namespace Identity.Domain.Entities.ApiClientAggregate
         private ApiClient() { }
         
         public Guid Id => _id;
-        private readonly Guid _id;
-
         public string ApiKey => _apiKey;
-        private readonly string _apiKey;
-        
         public string Name { get => _name; private set => _name = value; }
-        private string _name;
-        
         public string? Description { get => _description; private set => _description = value; }
-        private string? _description;
-
         public List<DynamicRole?> DynamicRoles { get => _dynamicRoles; private set => _dynamicRoles = value; }
-        private List<DynamicRole?> _dynamicRoles = new();
-
         public Guid UserId => _userId;
-        private readonly Guid _userId;
         
+        // ApiClient methods
         public void UpdateName(string name)
         {
             Name = name;
