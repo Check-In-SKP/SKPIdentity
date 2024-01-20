@@ -10,15 +10,12 @@ namespace Identity.Infrastructure.Repositories
     {
         private readonly IDomainEventDispatcher _domainEventDispatcher;
         private readonly IdentityDbContext _context;
-
-        public IDynamicRoleRepository DynamicRoleRepository { get; }
         public IUserRepository UserRepository { get; }
         public ISessionRepository SessionRepository { get; }
         public IApiClientRepository ApiClientRepository { get; }
 
         public UnitOfWork(IdentityDbContext context, DomainEventDispatcher domainEventDispatcher)
         {
-            DynamicRoleRepository = new DynamicRoleRepository(context);
             UserRepository = new UserRepository(context);
             SessionRepository = new SessionRepository(context);
             ApiClientRepository = new ApiClientRepository(context);

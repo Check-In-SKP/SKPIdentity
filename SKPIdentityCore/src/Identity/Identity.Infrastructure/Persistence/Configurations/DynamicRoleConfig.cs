@@ -19,12 +19,6 @@ namespace Identity.Infrastructure.Persistence.Configurations
             builder.Property(dr => dr.Description)
                 .IsRequired()
                 .HasMaxLength(256);
-
-            //// ApiClientId as foreign key to ApiClients
-            //builder.HasOne<ApiClient>()
-            //    .WithMany()
-            //    .HasForeignKey(dr => dr.ApiClientId)
-            //    .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
