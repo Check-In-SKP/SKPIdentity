@@ -8,6 +8,9 @@ namespace Identity.Application
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
+            // Add AutoMapper services
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
             // Add MediatR services
             services.AddMediatR(cfg => {
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());

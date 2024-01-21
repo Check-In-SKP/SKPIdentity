@@ -9,11 +9,11 @@ namespace Identity.Application.User.Commands
 {
     public record CreateUserCommand : IRequest<Guid>
     {
-        public string Email { get; init; } = null!;
-        public string Username { get; init; } = null!;
-        public string FirstName { get; init; } = null!;
-        public string LastName { get; init; } = null!;
-        public string Password { get; init; } = null!;
+        public required string Email { get; init; } = null!;
+        public required string Username { get; init; } = null!;
+        public required string FirstName { get; init; } = null!;
+        public required string LastName { get; init; } = null!;
+        public required string Password { get; init; } = null!;
     }
 
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
@@ -59,7 +59,7 @@ namespace Identity.Application.User.Commands
             }
             catch (Exception e)
             {
-                throw new ObjectCreationFailedException($"::::: Failed to create user ::::: " + e.Message);
+                throw new ObjectCreationException($"Failed to create user " + e.Message);
             }
         }
     }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Identity.Application.Common.Exceptions
 {
-    public class ObjectCreationFailedException : Exception
+    public class ObjectCreationException : Exception
     {
-        public ObjectCreationFailedException(string message) : base(message)
+        public ObjectCreationException(string message) : base(message)
         {
         }
     }
