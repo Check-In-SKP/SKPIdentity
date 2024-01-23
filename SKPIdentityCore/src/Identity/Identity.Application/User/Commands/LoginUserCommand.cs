@@ -2,68 +2,84 @@
 using Identity.Domain.Entities;
 using MediatR;
 using Identity.Application.Common.Services.Interfaces;
+using Identity.Application.Common.Exceptions;
+using Identity.Application.Session.Commands;
+using System.Security.Claims;
+using Identity.SharedKernel.Models.Enums;
 
 namespace Identity.Application.User.Commands
 {
-    //public record LoginUserCommand : IRequest<string>
-    //{
-    //    public required string UsernameOrEmail { get; init; }
-    //    public required string Password { get; init; }
-    //    public required string IpAddress { get; init; }
-    //    public Guid DeviceId { get; init; }
-    //}
+    public record LoginUserCommand : IRequest<string>
+    {
+        public required string UsernameOrEmail { get; init; }
+        public required string Password { get; init; }
+        public required string IpAddress { get; init; }
+        public required string UserAgent { get; init; }
+    }
 
-    //public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, string>
-    //{
-    //    private readonly IUnitOfWork _unitOfWork;
-    //    private readonly IBCryptPasswordHasher _passwordHasher;
-    //    private readonly ITokenProvider _tokenService;
+    public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, string>
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IPasswordHasher _passwordHasher;
+        private readonly ITokenProvider _tokenService;
+        private readonly IMediator _mediator;
 
-    //    public LoginUserCommandHandler(IUnitOfWork unitOfWork, IBCryptPasswordHasher passwordHasher, ITokenProvider tokenService)
-    //    {
-    //        _unitOfWork = unitOfWork;
-    //        _passwordHasher = passwordHasher;
-    //        _tokenService = tokenService;
-    //    }
+        public LoginUserCommandHandler(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher, ITokenProvider tokenService, IMediator mediator)
+        {
+            _unitOfWork = unitOfWork;
+            _passwordHasher = passwordHasher;
+            _tokenService = tokenService;
+            _mediator = mediator;
+        }
 
-    //    public async  Task<string> Handle(LoginUserCommand request, CancellationToken cancellationToken)
-    //    {
-    //        try
-    //        {
-    //            Identity.Domain.Entities.User? user;
+        public async Task<string> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                Identity.Domain.Entities.User? user;
 
-    //            // Checks if UsernameOrEmail is an email
-    //            if (request.UsernameOrEmail.Contains('@'))
-    //            {
-    //                user = await _unitOfWork.UserRepository.GetByEmailAsync(request.UsernameOrEmail);
-    //            }
-    //            else
-    //            {
-    //                user = await _unitOfWork.UserRepository.GetByUsernameAsync(request.UsernameOrEmail);
-    //            }
+                // Checks if UsernameOrEmail is an email
+                if (request.UsernameOrEmail.Contains('@'))
+                    user = await _unitOfWork.UserRepository.GetByEmailAsync(request.UsernameOrEmail);
+                else
+                    user = await _unitOfWork.UserRepository.GetByUsernameAsync(request.UsernameOrEmail);
 
-    //            if (user == null)
-    //            {
-    //                // Implement null exception
-    //                throw new ArgumentException();
-    //            }
+                // Null check
+                if (user == null)
+                    throw new ObjectIsNullException("Login failed, user does not exist.");
 
-    //            // Checks if Password is valid
-    //            if(!_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
-    //            {
-    //                // Implement invalid password exception
-    //                throw new Exception("Invalid password");
-    //            }
+                // Checks if Password is valid
+                if (!_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
+                    throw new UnauthorizedAccessException("Unauthorized: The provided password did not match.");
 
-    //            // Generate authentiaction code
+                // Calls CreateSessionCommand - The session will be saved to the database within the command
+                var createSessionCommand = new CreateSessionCommand
+                {
+                    IpAddress = request.IpAddress,
+                    UserAgent = request.UserAgent,
+                    UserId = user.Id
+                };
 
-    //        }
-    //        catch (Exception ex)
-    //        {
+                var sessionDto = await _mediator.Send(createSessionCommand, cancellationToken) ?? throw new ObjectIsNullException("Failed to create a session");
 
-    //        }
+                // Token claims
+                var claims = new List<Claim>
+                {
+                    new("session_id", sessionDto.Id.ToString()),
+                    new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new(ClaimTypes.Email, user.Email),
+                    new(ClaimTypes.Name, user.FirstName +  " " + user.LastName),
+                };
 
-    //        return "";
-    //    }
-    //}
+                // Creates id token with 10 min life span
+                var token = await _tokenService.GenerateRsaToken(claims, 10, TokenType.IdToken);
+
+                return token;
+            }
+            catch (Exception ex)
+            {
+                throw new UnauthorizedException("Failed to authenticate user: " + ex);
+            }
+        }
+    }
 }

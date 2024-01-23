@@ -1,6 +1,6 @@
 ﻿namespace Identity.Application.Common.Services.Interfaces
 {
-    public interface IBCryptPasswordHasher
+    public interface IPasswordHasher
     {
         public string HashPassword(string password);
         public bool VerifyPassword(string password, string hashedPassword);

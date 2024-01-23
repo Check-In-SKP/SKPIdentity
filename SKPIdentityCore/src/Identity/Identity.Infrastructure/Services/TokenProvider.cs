@@ -28,7 +28,7 @@ namespace Identity.Infrastructure.Services
             var hmacKey = await _keyManager.HmacKeyAsync;
 
             // Add TokenType claim
-            claims = claims.Concat(new[] { new Claim("TokenType", tokenType.ToTokenString()) });
+            claims = claims.Concat(new[] { new Claim("token_type", tokenType.ToTokenString()) });
 
             var key = new SymmetricSecurityKey(hmacKey);
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -66,7 +66,7 @@ namespace Identity.Infrastructure.Services
         }
 
         // Generates a random string
-        public static string GenerateRefreshToken()
+        public string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
             using var rng = RandomNumberGenerator.Create();

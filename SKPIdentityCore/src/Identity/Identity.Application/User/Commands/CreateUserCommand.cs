@@ -19,9 +19,9 @@ namespace Identity.Application.User.Commands
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IBCryptPasswordHasher _passwordHasher;
+        private readonly IPasswordHasher _passwordHasher;
 
-        public CreateUserCommandHandler(IUnitOfWork unitOfWork, IBCryptPasswordHasher passwordHasher)
+        public CreateUserCommandHandler(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher)
         {
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;

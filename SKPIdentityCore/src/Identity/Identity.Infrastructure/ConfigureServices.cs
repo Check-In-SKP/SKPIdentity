@@ -40,7 +40,7 @@ namespace Identity.Infrastructure
             services.AddScoped<IDataProtectorService, DataProtectorService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenProvider, TokenProvider>();
-            services.AddScoped<IBCryptPasswordHasher, BCryptPasswordHasher>();
+            services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
             // Repositories

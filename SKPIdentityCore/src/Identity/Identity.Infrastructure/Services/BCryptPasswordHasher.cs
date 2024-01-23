@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Identity.Infrastructure.Services
 {
-    public class BCryptPasswordHasher : IBCryptPasswordHasher
+    public class BCryptPasswordHasher : IPasswordHasher
     {
         private const int _workFactor = 10; // Number times to rehash password
 
