@@ -44,6 +44,22 @@ namespace Identity.Infrastructure.Services
             return new RsaSecurityKey(rsa);
         }
 
+        public async Task<string> GetSerializedPublicKeyAsync()
+        {
+            var rsaParameters = await PublicRsaKeyParametersAsync;
+
+            var publicKey = (new
+            {
+                kty = "RSA",
+                use = "sig",
+                alg = "RS256",
+                n = Convert.ToBase64String(rsaParameters.Modulus ?? throw new InvalidOperationException("RSA modulus is null.")),
+                e = Convert.ToBase64String(rsaParameters.Exponent ?? throw new InvalidOperationException("RSA exponent is null."))
+            }) ?? throw new InvalidOperationException("Public key is null.");
+
+            return JsonConvert.SerializeObject(publicKey);
+        }
+
         private async Task<T> LoadOrCreateKeyAsync<T>(string keyFileName, bool includePrivateParameters = false)
         {
             await _semaphore.WaitAsync();

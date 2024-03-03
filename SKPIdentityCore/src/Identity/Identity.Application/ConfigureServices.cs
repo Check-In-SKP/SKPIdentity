@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Identity.Application
 {
-    public static class ConfigureServes
+    public static class ConfigureServices
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {

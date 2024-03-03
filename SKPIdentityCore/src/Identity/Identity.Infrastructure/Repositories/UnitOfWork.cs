@@ -14,7 +14,7 @@ namespace Identity.Infrastructure.Repositories
         public ISessionRepository SessionRepository { get; }
         public IApiClientRepository ApiClientRepository { get; }
 
-        public UnitOfWork(IdentityDbContext context, DomainEventDispatcher domainEventDispatcher)
+        public UnitOfWork(IdentityDbContext context, IDomainEventDispatcher domainEventDispatcher)
         {
             UserRepository = new UserRepository(context);
             SessionRepository = new SessionRepository(context);

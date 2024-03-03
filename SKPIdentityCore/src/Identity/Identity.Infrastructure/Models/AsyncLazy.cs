@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Identity.Infrastructure.Models
 {
+    // Class to create a lazy task
+    // Lazy initialization is the tactic of delaying the creation of an object,
+    // the calculation of a value, or some other expensive process until
+    // the first time it is needed.
     public class AsyncLazy<T>
     {
         private readonly Lazy<Task<T>> _lazyTask;

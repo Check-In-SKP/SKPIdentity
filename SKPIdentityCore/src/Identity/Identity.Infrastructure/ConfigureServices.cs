@@ -26,10 +26,6 @@ namespace Identity.Infrastructure
                 options.Audience = configuration.GetSection("JwtSettings:Audience")?.Value ?? "default-audience";
             });
 
-            // DbContext
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<IdentityDbContext>(options => options.UseNpgsql(connectionString));
-
             // Infrastructure services
             services.AddScoped<IKeyManager>(provider => new KeyManager(keyDirectory));
 
@@ -37,16 +33,23 @@ namespace Identity.Infrastructure
                 .PersistKeysToFileSystem(new DirectoryInfo(keyDirectory))
                 .SetApplicationName("SKPIdentity");
 
+            services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             services.AddScoped<IDataProtectorService, DataProtectorService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenProvider, TokenProvider>();
-            services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
-            services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+            // DbContext
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<IdentityDbContext>(options => options.UseNpgsql(connectionString));
 
             // Repositories
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISessionRepository, SessionRepository>();
             services.AddScoped<IApiClientRepository, ApiClientRepository>();
+
+            // Unit of Work
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

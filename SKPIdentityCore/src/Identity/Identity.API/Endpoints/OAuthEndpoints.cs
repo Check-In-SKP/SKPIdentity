@@ -1,4 +1,8 @@
-﻿using Identity.Application.Common.Services.Interfaces;
+﻿using Identity.Infrastructure.Services.Interfaces;
+using Identity.SharedKernel.Models;
+using System.Security.Cryptography;
+
+
 //using Identity.Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
@@ -14,13 +18,14 @@ namespace Identity.API.Endpoints
     {
         public static void MapOAuthEndpoints(this WebApplication app)
         {
-            app.MapGet("/login", GetLoginHandler);
-            app.MapPost("/login", LoginHandler);
+            app.MapGet("/login", LoginPage);
+            app.MapPost("/login", AuthorizationHandler);
+            app.MapGet("/oauth/token/verification-key", GetVerificationKey);
             //app.MapGet("/oauth/authorize", AuthorizeHandler);
             //app.MapPost("/oauth/token", TokenHandler);
         }
 
-        private static async Task<IResult> GetLoginHandler(string returnUrl, HttpResponse response)
+        private static async Task<IResult> LoginPage(string returnUrl, HttpResponse response)
         {
             response.ContentType = "text/html";
             await response.WriteAsync($@"
@@ -53,107 +58,41 @@ namespace Identity.API.Endpoints
             return Results.Ok();
         }
 
-        private static async Task<IResult> LoginHandler(HttpContext ctx, string returnUrl)
+         private static async Task<IResult> AuthorizationHandler(HttpContext ctx, IDataProtectionProvider dataProtectionProvider)
         {
-            // Simulate user authentication - in real scenario, validate user credentials
-            var claims = new List<Claim>
+            var queryParams = ctx.Request.Query;
+            var clientId = queryParams["client_id"];
+            var codeChallenge = queryParams["code_challenge"];
+            var codeChallengeMethod = queryParams["code_challenge_method"];
+            var redirectUri = queryParams["redirect_uri"];
+            var scope = queryParams["scope"];
+            var state = queryParams["state"];
+
+            if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(codeChallenge) || string.IsNullOrEmpty(redirectUri))
             {
-                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Name, "SampleUser")
+                return Results.BadRequest("Missing required parameters");
+            }
+
+            var authCode = new AuthCode
+            {
+                ClientId = clientId,
+                CodeChallenge = codeChallenge,
+                CodeChallengeMethod = codeChallengeMethod,
+                RedirectUri = redirectUri,
+                Expiry = DateTime.UtcNow.AddMinutes(5)
             };
 
-            var claimsIdentity = new ClaimsIdentity(claims, "cookie");
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            var protector = dataProtectionProvider.CreateProtector("OAuth");
+            var protectedCode = protector.Protect(JsonSerializer.Serialize(authCode));
 
-            await ctx.SignInAsync("cookie", claimsPrincipal);
-
-            return Results.Redirect(string.IsNullOrEmpty(returnUrl) ? "/" : returnUrl);
+            var responseUri = $"{redirectUri}?code={protectedCode}&state={state}";
+            return Results.Redirect(responseUri);
         }
+        private static async Task<IResult> GetVerificationKey(IKeyManager keyManager)
+        {
+            var rsaPublicKey = await keyManager.GetSerializedPublicKeyAsync();
 
-        //private static IResult AuthorizeHandler(HttpContext ctx, IDataProtectionProvider dataProtectionProvider)
-        //{
-        //    var queryParams = ctx.Request.Query;
-        //    var clientId = queryParams["client_id"];
-        //    var codeChallenge = queryParams["code_challenge"];
-        //    var codeChallengeMethod = queryParams["code_challenge_method"];
-        //    var redirectUri = queryParams["redirect_uri"];
-        //    var scope = queryParams["scope"];
-        //    var state = queryParams["state"];
-
-        //    if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(codeChallenge) || string.IsNullOrEmpty(redirectUri))
-        //    {
-        //        return Results.BadRequest("Missing required parameters");
-        //    }
-
-        //    var authCode = new AuthCode
-        //    {
-        //        ClientId = clientId,
-        //        CodeChallenge = codeChallenge,
-        //        CodeChallengeMethod = codeChallengeMethod,
-        //        RedirectUri = redirectUri,
-        //        Expiry = DateTime.UtcNow.AddMinutes(5)
-        //    };
-
-        //    var protector = dataProtectionProvider.CreateProtector("OAuth");
-        //    var protectedCode = protector.Protect(JsonSerializer.Serialize(authCode));
-
-        //    var responseUri = $"{redirectUri}?code={protectedCode}&state={state}";
-        //    return Results.Redirect(responseUri);
-        //}
-
-        //private static async Task<IResult> TokenHandler(HttpRequest request, ITokenProvider tokenService, IAuthService authService, IDataProtectionProvider dataProtectionProvider)
-        //{
-        //    var bodyContent = await new StreamReader(request.Body).ReadToEndAsync();
-        //    var parsedContent = HttpUtility.ParseQueryString(bodyContent);
-
-        //    var grantType = parsedContent["grant_type"];
-        //    var code = parsedContent["code"];
-        //    var redirectUri = parsedContent["redirect_uri"];
-        //    var codeVerifier = parsedContent["code_verifier"];
-
-        //    if (grantType != "authorization_code")
-        //    {
-        //        return Results.BadRequest("Unsupported grant type");
-        //    }
-
-        //    var protector = dataProtectionProvider.CreateProtector("OAuth");
-        //    AuthCode authCode;
-        //    try
-        //    {
-        //        var unprotectedCode = protector.Unprotect(code);
-        //        authCode = JsonSerializer.Deserialize<AuthCode>(unprotectedCode);
-        //    }
-        //    catch
-        //    {
-        //        return Results.BadRequest("Invalid code");
-        //    }
-
-        //    if (authCode == null || !authService.ValidateCodeVerifier(authCode, codeVerifier))
-        //    {
-        //        return Results.BadRequest("Invalid code verifier");
-        //    }
-
-        //    // Ensure that the auth code hasn't expired and redirectUri matches
-        //    if (authCode.Expiry < DateTimeOffset.UtcNow || authCode.RedirectUri != redirectUri)
-        //    {
-        //        return Results.BadRequest("Invalid or expired authorization code");
-        //    }
-
-        //    var claims = new List<Claim>
-        //    {
-        //        new Claim(JwtRegisteredClaimNames.Sub, authCode.ClientId)
-        //    };
-
-        //    var accessToken = tokenService.GenerateAccessToken(claims);
-        //    var refreshToken = tokenService.GenerateRefreshToken();
-
-        //    return Results.Ok(new
-        //    {
-        //        access_token = accessToken,
-        //        refresh_token = refreshToken,
-        //        token_type = "Bearer",
-        //        expires_in = 900 // 15 minutes
-        //    });
-        //}
+            return Results.Ok(rsaPublicKey);
+        }
     }
 }

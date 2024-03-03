@@ -13,5 +13,6 @@ namespace Identity.Infrastructure.Services.Interfaces
         Task<RsaSecurityKey> GetPrivateRsaSecurityKeyAsync();
         Task<RsaSecurityKey> GetPublicRsaSecurityKeyAsync();
         Task<byte[]> HmacKeyAsync {  get; }
+        Task<string> GetSerializedPublicKeyAsync();
     }
 }

@@ -18,9 +18,6 @@ namespace Identity.Infrastructure.Persistence.Configurations
             builder.Property(s => s.IpAddress)
                 .IsRequired();
 
-            builder.Property(s => s.DeviceId)
-                .IsRequired();
-
             builder.Property(s => s.IsRevoked)
                 .IsRequired();
 
